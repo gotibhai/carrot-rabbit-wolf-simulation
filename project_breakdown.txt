@@ -1,0 +1,15 @@
+Breaking down the Project 
+    1. Create a Carrot/Rabbit/Wolf module with supervisors.
+    2. Spike into Best graphics
+    3. Add intelligent features
+
+Questions?
+1. Whats the user interface?
+    A. User starts the app and initializes the number of carrot/rabbit/wolf patches.
+    We show the world (the board) and the simulation just start from there.
+
+2. Can we separate frontend and backend?
+    A. ???
+
+
+
