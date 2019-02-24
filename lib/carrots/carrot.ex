@@ -4,15 +4,6 @@ defmodule Simulation.Carrots.Carrot do
   use GenServer
   defstruct name: nil, color: nil, age: nil
 
-  def stay_alive(carrot) do
-    Logger.debug("Inside #{__MODULE__} stay_alive/1")
-    receive do
-      {:hello, value} ->
-        Logger.debug(value)
-        stay_alive(carrot)
-    end
-  end
-
   def start_link({name, color, age}) do
     Logger.debug("Inside #{__MODULE__} start_link/1. Name: #{name}, Color: #{color}, Age:#{age}")
     GenServer.start_link(

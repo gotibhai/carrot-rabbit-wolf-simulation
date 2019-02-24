@@ -11,6 +11,24 @@ Questions?
 2. Can we separate frontend and backend?
     A. ???
 
+## Designing the World API
+
+
+                                                         ___________________
+                                                        |                   |
+                                       |--------------->| Carrot Supervisor |
+                                       |                |___________________|
+                                       |                  
+     __________________                |                 ____________________
+    |                  |               |                |                    |
+    | World Supervisor |---------------|--------------->|  Rabbit Supervisor |
+    |__________________|               |                |____________________|
+                                       |
+                                       |                  ___________________
+                                       |                 |                   |
+                                       |---------------->|  Wolf Supervisor  |
+                                                         |___________________|
+
 
 
 ## How does a supervisor work in Elixir?

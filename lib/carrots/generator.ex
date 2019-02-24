@@ -5,6 +5,8 @@ defmodule Simulation.Carrots.Generator do
   require Logger
   use Supervisor
   alias Simulation.Carrots.{Carrot, Counter}
+  @carrot_patch_size 10
+
 
   def start_link(state \\ []) do
     Logger.debug("Inside #{__MODULE__} start_link/1")
@@ -20,7 +22,7 @@ defmodule Simulation.Carrots.Generator do
   def create_a_name() do
     value = Counter.get_next_count(Counter)
     Logger.debug("Value is #{value}")
-    :"carrot#{value}"
+    :"c#{value}"
   end
 
   @doc """
@@ -28,9 +30,19 @@ defmodule Simulation.Carrots.Generator do
   """
   def create_a_carrot() do
     name = create_a_name()
-    color = "Red"
+    color = "Orange"
     age = 1
     child_spec = {Carrot, {name, color, age}}
     DynamicSupervisor.start_child(__MODULE__, child_spec)
+  end
+
+  @doc """
+  This function will create a carrot patch.
+  Carrot patch: These are a bunch of carrots!
+  """
+  def create_a_carrot_patch() do
+    Enum.each(0..@carrot_patch_size, fn(_x) ->
+      create_a_carrot()
+    end)
   end
 end
