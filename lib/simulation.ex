@@ -9,7 +9,9 @@ defmodule Simulation.Application do
     import Supervisor.Spec
 
     Logger.debug("Application started!")
-    children = [supervisor(Simulation.Carrots.Supervisor, [])]
+    children = [
+      supervisor(Simulation.Carrots.CarrotSupervisor, [])
+    ]
     Supervisor.start_link(children, strategy: :one_for_one)
   end
 

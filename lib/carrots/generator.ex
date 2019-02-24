@@ -1,17 +1,36 @@
 defmodule Simulation.Carrots.Generator do
+  @moduledoc """
+  This module is the generator of Carrots.
+  """
   require Logger
-  use GenServer
-  alias Simulation.Carrots.Carrot
-  def start_link(state) do
-    GenServer.start_link(__MODULE__, state, name: __MODULE__)
+  use Supervisor
+  alias Simulation.Carrots.{Carrot, Counter}
+
+  def start_link(state \\ []) do
+    Logger.debug("Inside #{__MODULE__} start_link/1")
+    DynamicSupervisor.start_link(__MODULE__, state, name: __MODULE__)
   end
 
-  def init(state) do
-    Logger.debug("Inside Init")
-    {:ok, state}
+  def init(_state) do
+    Logger.debug("Inside #{__MODULE__} Init")
+    {:ok, _pid} = Counter.start_link()
+    DynamicSupervisor.init(strategy: :one_for_one)
   end
+
+  def create_a_name() do
+    value = Counter.get_next_count(Counter)
+    Logger.debug("Value is #{value}")
+    :"carrot#{value}"
+  end
+
+  @doc """
+  This function should return a process which is initialized with a carrot object.
+  """
   def create_a_carrot() do
-    Task.start_link(fn -> Carrot.stay_alive(%Carrot{name: "c", color: "orange", age: 1}) end)
+    name = create_a_name()
+    color = "Red"
+    age = 1
+    child_spec = {Carrot, {name, color, age}}
+    DynamicSupervisor.start_child(__MODULE__, child_spec)
   end
-
 end
