@@ -1,0 +1,11 @@
+{application,simulation,
+             [{applications,[kernel,stdlib,elixir,logger]},
+              {description,"simulation"},
+              {modules,['Elixir.Simulation.Application',
+                        'Elixir.Simulation.Carrots.Carrot',
+                        'Elixir.Simulation.Carrots.CarrotSupervisor',
+                        'Elixir.Simulation.Carrots.Counter',
+                        'Elixir.Simulation.Carrots.Generator']},
+              {registered,[]},
+              {vsn,"0.1.0"},
+              {mod,{'Elixir.Simulation.Application',[]}}]}.
