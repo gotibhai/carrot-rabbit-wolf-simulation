@@ -33,7 +33,8 @@ defmodule Simulation.Carrots.Generator do
     color = "Orange"
     age = 1
     child_spec = {Carrot, {name, color, age}}
-    DynamicSupervisor.start_child(__MODULE__, child_spec)
+    {:ok, pid} = DynamicSupervisor.start_child(__MODULE__, child_spec)
+    {:ok, pid}
   end
 
   @doc """
