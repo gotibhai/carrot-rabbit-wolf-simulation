@@ -5,8 +5,8 @@ defmodule Simulation.Carrots.Generator do
   require Logger
   use Supervisor
   alias Simulation.Carrots.{Carrot, Counter}
+  alias Simulation.World.{WorldAPI, Position}
   @carrot_patch_size 10
-
 
   def start_link(state \\ []) do
     Logger.debug("Inside #{__MODULE__} start_link/1")
@@ -25,15 +25,13 @@ defmodule Simulation.Carrots.Generator do
     :"c#{value}"
   end
 
-  @doc """
-  This function should return a process which is initialized with a carrot object.
-  """
-  def create_a_carrot() do
+  defp create_a_carrot(position \\ %Position{lat: 0, long: 0}) do
     name = create_a_name()
     color = "Orange"
     age = 1
-    child_spec = {Carrot, {name, color, age}}
-    DynamicSupervisor.start_child(__MODULE__, child_spec)
+    child_spec = {Carrot, {name, color, age, position}}
+    IO.inspect child_spec
+    {:ok, _agent1} = DynamicSupervisor.start_child(__MODULE__, child_spec)
   end
 
   @doc """
@@ -41,8 +39,9 @@ defmodule Simulation.Carrots.Generator do
   Carrot patch: These are of @carrot_patch_size number of carrots made together!
   """
   def create_a_carrot_patch() do
-    Enum.each(0..@carrot_patch_size, fn(_x) ->
-      create_a_carrot()
+    carrot_locations = WorldAPI.get_patch(@carrot_patch_size)
+    Enum.each(0..@carrot_patch_size, fn(x) ->
+      create_a_carrot(Enum.at(carrot_locations, x))
     end)
   end
 end
