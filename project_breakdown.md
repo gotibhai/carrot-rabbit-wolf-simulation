@@ -11,6 +11,8 @@ Questions?
 2. Can we separate frontend and backend?
     A. ???
 
+
+
 ## Designing the World API
 
 
@@ -24,10 +26,10 @@ Questions?
     | World Supervisor |---------------|--------------->|  Rabbit Supervisor |
     |__________________|               |                |____________________|
                                        |
-                                       |                  ___________________
-                                       |                 |                   |
-                                       |---------------->|  Wolf Supervisor  |
-                                                         |___________________|
+                                       |                 ___________________
+                                       |                |                   |
+                                       |--------------->|  Wolf Supervisor  |
+                                                        |___________________|
 
 
 
