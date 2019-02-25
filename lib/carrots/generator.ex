@@ -38,7 +38,7 @@ defmodule Simulation.Carrots.Generator do
 
   @doc """
   This function will create a carrot patch.
-  Carrot patch: These are a bunch of carrots!
+  Carrot patch: These are of @carrot_patch_size number of carrots made together!
   """
   def create_a_carrot_patch() do
     Enum.each(0..@carrot_patch_size, fn(_x) ->
