@@ -10,7 +10,9 @@ defmodule Simulation.Application do
 
     Logger.debug("Application started!")
     children = [
-      supervisor(Simulation.Carrots.CarrotSupervisor, [])
+      supervisor(Simulation.Carrots.CarrotSupervisor, []),
+      supervisor(Simulation.Rabbits.RabbitSupervisor, []),
+      supervisor(Simulation.World.WorldSupervisor, [])
     ]
     Supervisor.start_link(children, strategy: :one_for_one)
   end

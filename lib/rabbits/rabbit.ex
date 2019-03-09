@@ -1,21 +1,21 @@
-defmodule Simulation.Carrots.Carrot do
+defmodule Simulation.Rabbits.Rabbit do
   require Logger
-  alias Simulation.Carrots.Carrot
+  alias Simulation.Rabbits.Rabbit
   alias Simulation.World.Position
   use GenServer
-  defstruct name: nil, color: nil, age: nil, position: %Position{}
+  defstruct name: nil, weight: nil, age: nil, position: %Position{}
 
-  def start_link({name, color, age, position}) do
+  def start_link({name, weight, age, position}) do
     Logger.debug("Inside #{__MODULE__} start_link/1.")
     GenServer.start_link(
       __MODULE__,
-      {name, color, age, position},
-      name: :"carrot_#{name}"
+      {name, weight, age, position},
+      name: :"rabbit_#{name}"
       )
   end
 
-  def init({name, color, age, position}) do
-    {:ok, %Carrot{name: name, color: color, age: age, position: position}}
+  def init({name, weight, age, position}) do
+    {:ok, %Rabbit{name: name, weight: weight, age: age, position: position}}
   end
 
   def handle_cast(:eat, state) do
