@@ -1,4 +1,4 @@
-defmodule Simulation.Carrots.Generator do
+defmodule Simulation.Carrots.CarrotGenerator do
   @moduledoc """
   This module is the generator of Carrots.
   """
@@ -6,7 +6,7 @@ defmodule Simulation.Carrots.Generator do
   use Supervisor
   alias Simulation.Carrots.{Carrot, Counter}
   alias Simulation.World.{WorldAPI, Position}
-  @carrot_patch_size 10
+  @carrot_patch_size 5
 
   def start_link(state \\ []) do
     Logger.debug("Inside #{__MODULE__} start_link/1")
@@ -20,17 +20,18 @@ defmodule Simulation.Carrots.Generator do
   end
 
   def create_a_name() do
-    value = Counter.get_next_count(Counter)
-    Logger.debug("Value is #{value}")
-    :"c#{value}"
+    :"c#{Counter.get_next_count(Counter)}"
   end
 
-  defp create_a_carrot(position \\ %Position{lat: 0, long: 0}) do
+  defp create_a_carrot(position) do
     name = create_a_name()
     color = "Orange"
     age = 1
-    child_spec = {Carrot, {name, color, age, position}}
-    IO.inspect child_spec
+    child_spec = %{
+      id: Carrot,
+      restart: :temporary,
+      start: {Carrot, :start_link, [{name, color, age, position}]}
+    }
     {:ok, _agent1} = DynamicSupervisor.start_child(__MODULE__, child_spec)
   end
 
@@ -39,8 +40,8 @@ defmodule Simulation.Carrots.Generator do
   Carrot patch: These are of @carrot_patch_size number of carrots made together!
   """
   def create_a_carrot_patch() do
-    carrot_locations = WorldAPI.get_patch(@carrot_patch_size)
-    Enum.each(0..@carrot_patch_size, fn(x) ->
+    carrot_locations = WorldAPI.get_locations(@carrot_patch_size)
+    Enum.each(0..@carrot_patch_size-1, fn(x) ->
       create_a_carrot(Enum.at(carrot_locations, x))
     end)
   end

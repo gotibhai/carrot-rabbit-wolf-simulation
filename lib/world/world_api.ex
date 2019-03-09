@@ -17,9 +17,9 @@ defmodule Simulation.World.WorldAPI do
     IO.inspect(state)
     {:ok, state}
   end
-  def get_patch(size) do
+  def get_locations(size) do
     GenServer.call(__MODULE__, :get_empty_positions)
-    |> Enum.take(size)
+    |> Enum.take_random(size)
     |> update_used_positions()
   end
 
