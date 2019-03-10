@@ -5,7 +5,8 @@ defmodule Simulation.World.WorldGenerator do
   require Logger
   use GenServer
   alias Simulation.Carrots.CarrotGenerator
-  alias Simulation.Rabbits.RabbitGenerator
+  alias Simulation.Rabbits.RabbitAPI
+  alias Simulation.World.WorldAPI
 
   def start_link() do
     Logger.debug("WorldGenerator starting")
@@ -19,6 +20,7 @@ defmodule Simulation.World.WorldGenerator do
 
   def initialize_state() do
     CarrotGenerator.create_a_carrot_patch()
-    RabbitGenerator.create_rabbits()
+    RabbitAPI.create_rabbits()
+    Process.send(WorldAPI, :start_movement, [])
   end
 end
