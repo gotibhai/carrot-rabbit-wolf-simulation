@@ -1,4 +1,4 @@
-defmodule Simulation.Carrots.CarrotGenerator do
+defmodule Simulation.Carrots.CarrotAPI do
   @moduledoc """
   This module is the generator of Carrots.
   """
@@ -6,7 +6,7 @@ defmodule Simulation.Carrots.CarrotGenerator do
   use Supervisor
   alias Simulation.Carrots.{Carrot, Counter}
   alias Simulation.World.{LocationAPI, Position}
-  @carrot_patch_size 1
+  @carrot_patch_size 100
 
   def start_link(state \\ []) do
     Logger.debug("Inside #{__MODULE__} start_link/1")
@@ -20,7 +20,7 @@ defmodule Simulation.Carrots.CarrotGenerator do
   end
 
   defp create_a_name() do
-    :"c#{Counter.get_next_count(Counter)}"
+    :"carrot_c#{Counter.get_next_count(Counter)}"
   end
 
   defp create_a_carrot(position) do
@@ -32,6 +32,7 @@ defmodule Simulation.Carrots.CarrotGenerator do
       restart: :temporary,
       start: {Carrot, :start_link, [{name, color, age, position}]}
     }
+    LocationAPI.update_occupancy(name, position)
     {:ok, _agent1} = DynamicSupervisor.start_child(__MODULE__, child_spec)
   end
 

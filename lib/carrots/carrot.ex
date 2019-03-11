@@ -10,22 +10,16 @@ defmodule Simulation.Carrots.Carrot do
     GenServer.start_link(
       __MODULE__,
       {name, color, age, position},
-      name: :"carrot_#{name}"
-      )
+      name: name
+    )
   end
 
   def init({name, color, age, position}) do
     {:ok, %Carrot{name: name, color: color, age: age, position: position}}
   end
 
-  def handle_cast(:eat, state) do
-    Logger.debug("Inside handle cast")
-    kill_myself()
-    {:no_reply, state}
-  end
-
-  def kill_myself() do
-    Logger.debug("Killing myself now!")
-    Process.exit(self(), :dead)
+  def handle_info(:eat, state) do
+    Logger.debug("I'M GETTING KILLED(eaten)")
+    {:stop, :normal, state}
   end
 end

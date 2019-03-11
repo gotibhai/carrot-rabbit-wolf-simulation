@@ -10,8 +10,8 @@ defmodule Simulation.Rabbits.Rabbit do
     GenServer.start_link(
       __MODULE__,
       {name, weight, age, position},
-      name: :"rabbit_#{name}"
-      )
+      name: name
+    )
   end
 
   def init({name, weight, age, position}) do
@@ -22,24 +22,43 @@ defmodule Simulation.Rabbits.Rabbit do
   This function is responsible for moving the rabbit.
   """
   def move_rabbit(rabbit_name) do
-    GenServer.call(rabbit_name, :move)
+    case Process.alive?(rabbit_name) do
+      true -> GenServer.call(rabbit_name, {:move, rabbit_name})
+      false -> Logger.debug("#{rabbit_name} is dead and I'm skipping to the next rabbit.")
+    end
+
   end
 
-  def handle_call(:move, _from, state) do
+  def handle_call({:move, rabbit_name}, _from, state) do
     Logger.debug("Making a move for rabbit. #{inspect state}")
     new_position = LocationAPI.move_character(Map.fetch!(state, :position))
+    handle_movement(state, rabbit_name, new_position)
     {:reply, new_position, Map.put(state, :position, new_position)}
   end
 
-  def handle_cast(:eat, state) do
-    Logger.debug("Inside handle cast")
-    kill_myself()
-    {:no_reply, state}
+
+  def handle_movement(state, rabbit_name, new_position) do
+    Logger.debug("Handling movement")
+    old_occupant = LocationAPI.who_lives_here(new_position)
+    case old_occupant do
+      #Fixme: Right now, I'm killing the character. With wolf, need to check who it is.
+      {:ok, char_name} -> eat(rabbit_name, char_name)
+      nil -> nil
+    end
+    LocationAPI.update_occupancy(Map.fetch!(state, :position))
+    LocationAPI.update_occupancy(Map.fetch!(state, :name), new_position)
   end
 
-  def kill_myself() do
-    Logger.debug("Killing myself now!")
-    Process.exit(self(), :dead)
+  defp eat(rabbit_name, char_name) do
+    Logger.debug("Hello, I'm #{rabbit_name} and I'm tryna eat #{char_name} rn")
+    case rabbit_name != char_name do
+      true -> Process.send(char_name, :eat, [])
+      false -> nil
+    end
   end
 
+  def handle_info(:eat, state) do
+    Logger.debug("I'M GETTING KILLED(eaten)")
+    {:stop, :normal, state}
+  end
 end

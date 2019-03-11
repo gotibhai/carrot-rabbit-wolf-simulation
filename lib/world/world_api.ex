@@ -28,6 +28,6 @@ defmodule Simulation.World.WorldAPI do
   end
 
   def start_movement() do
-      Process.send_after(self(), :start_movement, 5 * 1000) # In 2 hours
+      Process.send_after(self(), :start_movement, 3 * 1000) # In 2 hours
   end
 end

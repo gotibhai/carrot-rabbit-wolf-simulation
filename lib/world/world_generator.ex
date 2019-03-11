@@ -4,7 +4,7 @@ defmodule Simulation.World.WorldGenerator do
   """
   require Logger
   use GenServer
-  alias Simulation.Carrots.CarrotGenerator
+  alias Simulation.Carrots.CarrotAPI
   alias Simulation.Rabbits.RabbitAPI
   alias Simulation.World.WorldAPI
 
@@ -19,7 +19,7 @@ defmodule Simulation.World.WorldGenerator do
   end
 
   def initialize_state() do
-    CarrotGenerator.create_a_carrot_patch()
+    CarrotAPI.create_a_carrot_patch()
     RabbitAPI.create_rabbits()
     Process.send(WorldAPI, :start_movement, [])
   end

@@ -6,7 +6,7 @@ defmodule Simulation.Rabbits.RabbitAPI do
   use Supervisor
   alias Simulation.Rabbits.{Rabbit, Counter}
   alias Simulation.World.{LocationAPI}
-  @rabbit_population 1
+  @rabbit_population 10
 
   @spec start_link(any()) :: :ignore | {:error, any()} | {:ok, pid()}
   def start_link(state \\ []) do
@@ -28,7 +28,7 @@ defmodule Simulation.Rabbits.RabbitAPI do
   end
 
   defp create_a_name() do
-    :"r#{Counter.get_next_count(Counter)}"
+    :"rabbit_r#{Counter.get_next_count(Counter)}"
   end
 
   defp create_a_rabbit(position) do
@@ -40,6 +40,7 @@ defmodule Simulation.Rabbits.RabbitAPI do
       restart: :temporary,
       start: {Rabbit, :start_link, [{name, weight, age, position}]}
     }
+    LocationAPI.update_occupancy(name, position)
     {:ok, _agent1} = DynamicSupervisor.start_child(__MODULE__, child_spec)
   end
 
