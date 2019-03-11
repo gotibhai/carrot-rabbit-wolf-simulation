@@ -29,7 +29,17 @@ Questions?
                                        |---------------->|  Wolf Supervisor  |
                                                          |___________________|
 
+## Updates to the design
 
+Initally started off as the WorldAPI doing all the location handling, then later split that out
+into LocationAPI, which is responsible to talk to all characters and provide them with locations etc.
+
+The WorldAPI's job right now is ambiguous. I needed a module(GenServer) to add the repetiveness of moves.
+A module which would recursively keep calling other the move function for all the moving animals. 
+
+The CarrotAPI and the Carrot module itself have some ambiguity as to what code should belong where.
+IMO, CarrotAPI was supposed to be like a generator(Following the Factory model) of Carrots. 
+Same goes for Rabbits.
 
 ## How does a supervisor work in Elixir?
 At the core of the OTP ser ver is a Genserver. At its most basic level a GenServer is a single process which runs 
