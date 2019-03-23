@@ -6,7 +6,7 @@ defmodule Simulation.Rabbits.RabbitAPI do
   use Supervisor
   alias Simulation.Rabbits.{Rabbit, Counter}
   alias Simulation.World.{LocationAPI}
-  @rabbit_population 10
+  @rabbit_population 2
 
   @spec start_link(any()) :: :ignore | {:error, any()} | {:ok, pid()}
   def start_link(state \\ []) do
@@ -52,6 +52,7 @@ defmodule Simulation.Rabbits.RabbitAPI do
     Enum.each(0..@rabbit_population-1, fn(x) ->
       create_a_rabbit(Enum.at(rabbit_locations, x))
     end)
+    :ok
   end
 
   @doc """
@@ -59,7 +60,9 @@ defmodule Simulation.Rabbits.RabbitAPI do
   it to move.
   """
   def move_all_rabbits() do
-    get_all_rabbits()
-    |> Enum.map(&(Rabbit.move_rabbit(&1)))
+    total_rabbits = get_all_rabbits()
+    Enum.map(total_rabbits, &(Rabbit.move_rabbit(&1)))
+    #GenServer.call(Simulation.Scenes.Home, {:num_rabbits, Enum.count(total_rabbits)})
+    Logger.info("SENT MESSAGE")
   end
 end

@@ -6,7 +6,7 @@ defmodule Simulation.Carrots.CarrotAPI do
   use Supervisor
   alias Simulation.Carrots.{Carrot, Counter}
   alias Simulation.World.{LocationAPI, Position}
-  @carrot_patch_size 100
+  @carrot_patch_size 50
 
   def start_link(state \\ []) do
     Logger.debug("Inside #{__MODULE__} start_link/1")
@@ -45,5 +45,6 @@ defmodule Simulation.Carrots.CarrotAPI do
     Enum.each(0..@carrot_patch_size-1, fn(x) ->
       create_a_carrot(Enum.at(carrot_locations, x))
     end)
+    :ok
   end
 end

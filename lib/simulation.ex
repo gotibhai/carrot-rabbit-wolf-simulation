@@ -8,8 +8,11 @@ defmodule Simulation.Application do
   def start(:normal, _start_args) do
     import Supervisor.Spec
 
+    main_viewport_config = Application.get_env(:simulation, :viewport)
+
     Logger.debug("Application started!")
     children = [
+      {Scenic, viewports: [main_viewport_config]},
       supervisor(Simulation.World.WorldSupervisor, [])
     ]
     Supervisor.start_link(children, strategy: :one_for_one)

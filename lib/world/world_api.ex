@@ -11,6 +11,8 @@ defmodule Simulation.World.WorldAPI do
   use GenServer
   alias Simulation.Rabbits.RabbitAPI
 
+  @time_interval 1000
+
   def start_link() do
     Logger.debug("WorldAPI starting")
     GenServer.start_link(__MODULE__, %{} ,name: __MODULE__)
@@ -28,6 +30,6 @@ defmodule Simulation.World.WorldAPI do
   end
 
   def start_movement() do
-      Process.send_after(self(), :start_movement, 3 * 1000) # In 2 hours
+      Process.send_after(self(), :start_movement, @time_interval)
   end
 end

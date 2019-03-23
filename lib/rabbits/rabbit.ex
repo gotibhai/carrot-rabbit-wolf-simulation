@@ -22,11 +22,10 @@ defmodule Simulation.Rabbits.Rabbit do
   This function is responsible for moving the rabbit.
   """
   def move_rabbit(rabbit_name) do
-    case Process.alive?(rabbit_name) do
-      true -> GenServer.call(rabbit_name, {:move, rabbit_name})
-      false -> Logger.debug("#{rabbit_name} is dead and I'm skipping to the next rabbit.")
+    case Process.whereis(rabbit_name) do
+      nil -> Logger.debug("#{rabbit_name} is dead and I'm skipping to the next rabbit.")
+      _pid -> GenServer.call(rabbit_name, {:move, rabbit_name})
     end
-
   end
 
   def handle_call({:move, rabbit_name}, _from, state) do
