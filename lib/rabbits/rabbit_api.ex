@@ -6,9 +6,8 @@ defmodule Simulation.Rabbits.RabbitAPI do
   use Supervisor
   alias Simulation.Rabbits.{Rabbit, Counter}
   alias Simulation.World.{LocationAPI}
-  @rabbit_population 10
+  @rabbit_population 2
 
-  @spec start_link(any()) :: :ignore | {:error, any()} | {:ok, pid()}
   def start_link(state \\ []) do
     Logger.debug("Inside #{__MODULE__} start_link/1")
     DynamicSupervisor.start_link(__MODULE__, state, name: __MODULE__)
@@ -20,7 +19,7 @@ defmodule Simulation.Rabbits.RabbitAPI do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  defp get_all_rabbits() do
+  def get_all_rabbits() do
     Supervisor.which_children(__MODULE__)
     |> Enum.map(fn {_a,b,_c,_d} -> Process.info(b) end)
     |> Enum.map(&(Enum.at(&1, 0)))
@@ -52,6 +51,7 @@ defmodule Simulation.Rabbits.RabbitAPI do
     Enum.each(0..@rabbit_population-1, fn(x) ->
       create_a_rabbit(Enum.at(rabbit_locations, x))
     end)
+    :ok
   end
 
   @doc """
@@ -59,7 +59,11 @@ defmodule Simulation.Rabbits.RabbitAPI do
   it to move.
   """
   def move_all_rabbits() do
-    get_all_rabbits()
-    |> Enum.map(&(Rabbit.move_rabbit(&1)))
+    total_rabbits = get_all_rabbits()
+    Enum.map(total_rabbits, &(Rabbit.move_rabbit(&1)))
+  end
+  def handle_cast({:update_num_rabbits}, _state) do
+    num_rabbits = get_all_rabbits() |> Enum.count |> Integer.to_string
+    GenServer.cast(Simulation.Rabbits.WorldAPI, {:rabbits, num_rabbits})
   end
 end

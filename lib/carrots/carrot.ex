@@ -1,6 +1,6 @@
 defmodule Simulation.Carrots.Carrot do
   require Logger
-  alias Simulation.Carrots.Carrot
+  alias Simulation.Carrots.{Carrot, CarrotAPI}
   alias Simulation.World.Position
   use GenServer
   defstruct name: nil, color: nil, age: nil, position: %Position{}
@@ -19,7 +19,9 @@ defmodule Simulation.Carrots.Carrot do
   end
 
   def handle_info(:eat, state) do
-    Logger.debug("I'M GETTING KILLED(eaten)")
-    {:stop, :normal, state}
+    #Process.send(CarrotAPI, :update_no_carrots, [])
+    GenServer.call(CarrotAPI, :update_no_carrots)
+    Logger.debug("I, Carrot, AM GETTING KILLED(eaten)")
+    {:noreply, state}
   end
 end

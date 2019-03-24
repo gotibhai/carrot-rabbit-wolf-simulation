@@ -6,18 +6,28 @@ defmodule Simulation.Carrots.CarrotAPI do
   use Supervisor
   alias Simulation.Carrots.{Carrot, Counter}
   alias Simulation.World.{LocationAPI, Position}
-  @carrot_patch_size 100
+  @carrot_patch_size 10
 
   def start_link(state \\ []) do
     Logger.debug("Inside #{__MODULE__} start_link/1")
-    DynamicSupervisor.start_link(__MODULE__, state, name: __MODULE__)
+    Supervisor.start_link(__MODULE__, state, name: __MODULE__)
   end
 
   def init(_state) do
     Logger.debug("Inside #{__MODULE__} Init")
     {:ok, _pid} = Counter.start_link()
-    DynamicSupervisor.init(strategy: :one_for_one)
+    children = []
+    Supervisor.init(children, strategy: :one_for_one)
   end
+
+  #===================================================================
+  def handle_call(:update_no_carrots, _from, state) do
+    Logger.info("INSIDE HANDLE_CAST, carrotAPI")
+    num_carrots = get_all_carrots() |> Enum.count |> Integer.to_string
+    GenServer.cast(Simulation.Rabbits.WorldAPI, {:carrots, num_carrots})
+    {:reply, state, state}
+  end
+
 
   defp create_a_name() do
     :"carrot_c#{Counter.get_next_count(Counter)}"
@@ -28,12 +38,12 @@ defmodule Simulation.Carrots.CarrotAPI do
     color = "Orange"
     age = 1
     child_spec = %{
-      id: Carrot,
+      id: name,
       restart: :temporary,
       start: {Carrot, :start_link, [{name, color, age, position}]}
     }
     LocationAPI.update_occupancy(name, position)
-    {:ok, _agent1} = DynamicSupervisor.start_child(__MODULE__, child_spec)
+    {:ok, _agent1} = Supervisor.start_child(__MODULE__, child_spec)
   end
 
   @doc """
@@ -45,5 +55,18 @@ defmodule Simulation.Carrots.CarrotAPI do
     Enum.each(0..@carrot_patch_size-1, fn(x) ->
       create_a_carrot(Enum.at(carrot_locations, x))
     end)
+    :ok
+  end
+
+  @doc """
+  This function returns the pids of all alive carrots
+  """
+  def get_all_carrots() do
+    Supervisor.which_children(__MODULE__)
+    |> Enum.map(fn {_a,b,_c,_d} -> Process.info(b) end)
+    |> IO.inspect
+    |> Enum.map(&(Enum.at(&1, 0)))
+    |> IO.inspect
+    |> Enum.map(fn {_a,b} -> b end)
   end
 end

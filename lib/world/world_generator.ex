@@ -19,8 +19,9 @@ defmodule Simulation.World.WorldGenerator do
   end
 
   def initialize_state() do
-    CarrotAPI.create_a_carrot_patch()
-    RabbitAPI.create_rabbits()
-    Process.send(WorldAPI, :start_movement, [])
+    with :ok = CarrotAPI.create_a_carrot_patch(),
+         :ok = RabbitAPI.create_rabbits() do
+      Process.send(WorldAPI, :start_movement, [])
+    end
   end
 end
