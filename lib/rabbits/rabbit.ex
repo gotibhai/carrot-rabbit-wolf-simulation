@@ -57,7 +57,8 @@ defmodule Simulation.Rabbits.Rabbit do
   end
 
   def handle_info(:eat, state) do
-    Logger.debug("I'M GETTING KILLED(eaten)")
-    {:stop, :normal, state}
+    Logger.debug("I, Rabbit, AM GETTING KILLED(eaten)")
+    GenServer.cast(Simulation.Rabbits.RabbitAPI, {:update_num_rabbits})
+    {:noreply, state}
   end
 end

@@ -4,7 +4,7 @@ defmodule Simulation.World.LocationAPI do
   """
   require Logger
   use GenServer
-  @board_size 100
+  @board_size 4
   alias Simulation.World.Position
 
   def start_link() do

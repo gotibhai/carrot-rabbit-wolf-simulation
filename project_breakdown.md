@@ -70,3 +70,6 @@ The correct way to do it is:
     }
 versus the incorrect way I was using before:
     {DynamiSupervisor, strategy: :one_for_one, name: Generator}
+
+Also pay close attention to the child spec of supervisor and DynamicSupervisor
+

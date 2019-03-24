@@ -5,7 +5,7 @@ use Mix.Config
 config :simulation, :viewport, %{
   name: :main_viewport,
   size: {900, 800},
-  default_scene: {Simulation.Scenes.Rabbit, nil},
+  default_scene: { Simulation.Scenes.Home, Simulation.Scenes.Rabbit},
   drivers: [
     %{
       module: Scenic.Driver.Glfw,

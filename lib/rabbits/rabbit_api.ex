@@ -8,7 +8,6 @@ defmodule Simulation.Rabbits.RabbitAPI do
   alias Simulation.World.{LocationAPI}
   @rabbit_population 2
 
-  @spec start_link(any()) :: :ignore | {:error, any()} | {:ok, pid()}
   def start_link(state \\ []) do
     Logger.debug("Inside #{__MODULE__} start_link/1")
     DynamicSupervisor.start_link(__MODULE__, state, name: __MODULE__)
@@ -20,7 +19,7 @@ defmodule Simulation.Rabbits.RabbitAPI do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  defp get_all_rabbits() do
+  def get_all_rabbits() do
     Supervisor.which_children(__MODULE__)
     |> Enum.map(fn {_a,b,_c,_d} -> Process.info(b) end)
     |> Enum.map(&(Enum.at(&1, 0)))
@@ -62,7 +61,9 @@ defmodule Simulation.Rabbits.RabbitAPI do
   def move_all_rabbits() do
     total_rabbits = get_all_rabbits()
     Enum.map(total_rabbits, &(Rabbit.move_rabbit(&1)))
-    #GenServer.call(Simulation.Scenes.Home, {:num_rabbits, Enum.count(total_rabbits)})
-    Logger.info("SENT MESSAGE")
+  end
+  def handle_cast({:update_num_rabbits}, _state) do
+    num_rabbits = get_all_rabbits() |> Enum.count |> Integer.to_string
+    GenServer.cast(Simulation.Rabbits.WorldAPI, {:rabbits, num_rabbits})
   end
 end
